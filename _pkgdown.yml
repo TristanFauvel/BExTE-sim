@@ -1,0 +1,146 @@
+url: 'https://tristanfauvel.github.io/BExTEsim/'
+template:
+  bootstrap: 5
+  bslib:
+    primary: "#F7931E"
+    base_font: {google: "Inter"}
+    heading_font: {google: "Inter"}
+    code_font: {google: "Fira Code"}
+  light-switch: true
+  theme: arrow-light
+  theme-dark: arrow-dark
+
+
+articles:
+- title: Simulation
+  desc: How a simulation study generates its data
+  contents:
+  - articles/simulation_illustration_low_level
+
+reference:
+- title: Simulation studies
+  desc: Run a simulation study and summarise its results
+- contents:
+  - bayesian_metric_vs_parameters
+  - bayesian_metric_vs_sample_size
+  - empirical_bayes_parameters_plots
+  - forest_plot
+  - forest_plot_bayesian
+  - get_parameters
+  - plot_metric_vs_drift
+  - plot_metric_vs_parameters
+  - plot_metric_vs_sample_size
+  - posterior_parameters_tables
+  - power_vs_tie_tables
+  - run_progress_tracker
+  - run_simulation_env
+  - simulation_analysis
+  - simulation_scenarios
+  - table_bayesian_ocs
+  - table_empirical_bayes_hyperparameters_vs_scenario
+  - table_methods_comparison
+  - tables_metric_vs_scenario
+
+- title: "Internals: plots"
+- contents:
+  - method_style
+  - method_key
+  - method_shape_map
+  - method_hue_map
+  - method_hue_ramp
+  - method_parameter_colors
+  - method_parameter_color_map
+  - method_parameter_positions
+  - style_config_object
+  - style_blend
+  - style_label_numbers
+  - style_numeric_ranges
+  - style_tuple_key
+  - plot_metric_vs_scenario
+  - estimate_bayesian_ocs
+  - set_size
+  - nominal_tie_breaks
+  - has_monte_carlo_uncertainty
+  - plot_baseline_success_proba_vs_xvar
+  - bayesian_ocs_plots
+  - frequentist_power_at_equivalent_tie
+  - frequentist_power_at_nominal_tie
+  - power_vs_tie
+  - posterior_parameters_plots
+  - power_vs_tie_plots
+  - forest_plot_methods_comparison
+  - forest_plot_methods_comparison_bayesian
+  - plot_metrics_vs_ess
+  - plot_posterior_parameters_vs_drift
+  - plot_success_proba_vs_drift
+  - plot_success_proba_vs_scenario
+  - plot_empirical_bayes_hyperparameters_vs_drift
+  - bayesian_operating_characteristics_vs_tie_plots
+  - forest_plot_sweet_spot
+  - forest_plot_sweet_spots_comparison
+  - operating_characteristics_vs_tie_plots
+  - operating_characteristic_vs_tie
+  - plot_metric_vs_drift_methods
+  - plot_sweet_spot_width_vs_scenario
+  - plot_metric_vs_sample_size_methods
+  - plot_metric_vs_scenario_methods
+  - scale_by_separate
+
+- title: "Internals: operating characteristics"
+- contents:
+  - sweet_spot
+  - sweet_spot_determination
+  - compute_freq_power
+  - compute_freq_power_pooling
+  - compute_power_with_tie_ci
+
+- title: "Internals: monte carlo uncertainty"
+  desc: Propagating simulation error into the comparison with the
+    frequentist benchmark at equivalent type I error
+- contents:
+  - binomial_replicate_count
+  - sample_binomial_proportion
+  - mover_difference_ci
+  - add_power_difference_columns
+  - flag_power_differences
+
+- title: "Internals: simulation"
+- contents:
+  - compute_control_drift_range
+  - compute_source_denominator_range
+  - compute_time_to_event_ranges
+  - frequentist_ocs_scenario_simulation
+  - bayesian_ocs_scenario_simulation
+  - simulation_bayesian_ocs
+  - simulation_frequentist_ocs
+  - is_primary_time_to_event_design
+  - time_to_event_axes_off_primary
+  - time_to_event_sensitivity_reference
+
+- title: "Internals: tables"
+- contents:
+  - table_power_vs_tie
+  - table_metric_vs_drift
+  - table_metric_vs_parameters
+  - table_metric_vs_sample_size
+  - table_posterior_parameters_vs_drift
+  - table_empirical_bayes_hyperparameters_vs_drift
+  - table_bayesian_metrics
+  - table_case_study_summary
+  - table_drift_ranges_and_sample_sizes
+
+- title: "Internals: utilities"
+- contents:
+  - check_colnames
+  - combine_parameters
+  - append_parameters_str
+  - convert_params_to_str
+  - important_drift_values
+  - make_labels_from_parameters
+  - filter_to_treatment_effect
+  - for_each_scenario
+  - filter_to_important_parameter_values
+  - matches_or_na
+  - remove_columns_from_df
+  - generate_comparison_table
+  - format_simulation_output_table

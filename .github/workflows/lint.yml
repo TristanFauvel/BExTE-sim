@@ -1,0 +1,74 @@
+name: lint
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+    branches:
+      - main
+      - master
+
+permissions:
+  contents: read
+
+jobs:
+  lint-changed-files:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Set up R
+        uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: '4.2.0'
+          use-public-rspm: true
+
+      - name: Install dependencies
+        uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: any::lintr
+          needs: lint
+
+      - name: Determine base ref to diff against
+        id: base
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          BASE_BRANCH: ${{ github.base_ref }}
+          BEFORE_SHA: ${{ github.event.before }}
+        run: |
+          if [ "$EVENT_NAME" = "pull_request" ]; then
+            git fetch origin "$BASE_BRANCH" --depth=1
+            echo "ref=origin/$BASE_BRANCH" >> "$GITHUB_OUTPUT"
+          elif git cat-file -e "$BEFORE_SHA" 2>/dev/null; then
+            echo "ref=$BEFORE_SHA" >> "$GITHUB_OUTPUT"
+          else
+            # First push to the branch, or a rewritten history: nothing to
+            # diff against, so lint everything that changed in this commit.
+            echo "ref=HEAD~1" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Lint files changed since ${{ steps.base.outputs.ref }}
+        env:
+          BASE_REF: ${{ steps.base.outputs.ref }}
+        run: |
+          changed <- system2("git", c("diff", "--name-only", "--diff-filter=d", Sys.getenv("BASE_REF"), "--", "*.R"), stdout = TRUE)
+          changed <- changed[file.exists(changed)]
+          cat("Changed R files:\n"); print(changed)
+          if (length(changed) == 0) {
+            cat("No changed R files to lint.\n")
+            quit(status = 0)
+          }
+          all_lints <- lapply(changed, lintr::lint)
+          n_lints <- sum(lengths(all_lints))
+          for (l in all_lints) print(l)
+          cat("Total lints:", n_lints, "\n")
+          quit(status = if (n_lints > 0) 1 else 0)
+        shell: Rscript {0}

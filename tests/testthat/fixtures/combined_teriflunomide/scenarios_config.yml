@@ -1,0 +1,68 @@
+n_replicates: 10000
+ndrift: 30
+parallelization: TRUE
+denominator_change_factor:
+    - 0.5
+    - 1
+    - 1.5
+sample_size_factors:
+    - 1
+    - 2
+    - 4
+    - 6
+target_to_source_std_ratio_range:
+    - 1
+    - 2
+# Time-to-event design axes. They are only simulated for the time-to-event
+# endpoint, so the other case studies in this run are unaffected.
+# Control-arm heterogeneity kappa = log(target control rate) - log(source control
+# rate). The magnitude mirrors the denominator_change_factor range above: the
+# target placebo relapse rate is two thirds of, equal to, or half again the
+# source one. kappa = 0 is always simulated whether or not it is listed here.
+control_drift_range:
+    - -0.405
+    - 0
+    - 0.405
+# Probability that a patient is lost to follow-up over the maximum follow-up time.
+dropout_probability:
+    - 0
+    - 0.05
+    - 0.10
+# The Weibull arm is the sensitivity analysis; the exponential one is primary.
+event_time_distribution:
+    - exponential
+    - weibull
+# The whole grid is simulated under the primary design (no control-arm
+# heterogeneity, no loss to follow-up, exponential event times). The sensitivity
+# designs are simulated only at the trial size the paper's teriflunomide figures
+# use, so they still vary the drift over its full range without multiplying the
+# run by every sample size and source denominator as well.
+sensitivity_reference:
+    sample_size_factor: 6
+    denominator_change_factor: 1
+case_studies:
+    - belimumab
+    - botox
+    - dapagliflozin
+    - mepolizumab
+    - aprepitant
+    - teriflunomide
+methods:
+    - RMP
+    - separate
+    - pooling
+    - conditional_power_prior
+    - test_then_pool_equivalence
+    - test_then_pool_difference
+    - p_value_based_PP
+    - EB_PP
+    - PDCCPP
+    - NPP
+    - commensurate_power_prior
+    - commensurate_prior
+    - egidi_empirical_mixture
+# Case studies whose operating characteristics are computed exactly, by
+# enumerating the responder counts, instead of by simulating n_replicates trials.
+exact_enumeration:
+    - aprepitant
+    - belimumab

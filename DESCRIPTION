@@ -1,0 +1,58 @@
+Package: BExTEsim
+Type: Package
+Title: Simulation Studies of Bayesian Extrapolation Methods
+Description: Runs simulation studies of the borrowing methods in 'BExTE'.
+    It reads YAML configurations of case studies, scenarios and methods,
+    simulates the frequentist and Bayesian operating characteristics of each
+    method over a grid of scenarios, in parallel if asked, and writes the
+    results to files. It then summarises the results in plots and tables.
+Version: 0.1.0
+Authors@R: c(person("Tristan", "Fauvel", email = "tristan.fauvel@proton.me", role = c("aut", "cre")), person("Pascal", "Godbillot", role = c("aut")))
+Depends:
+    R (>= 4.0.0),
+    BExTE (>= 0.0.2)
+Imports:
+    Bolstad2,
+    dplyr,
+    futile.logger,
+    grDevices,
+    jsonlite,
+    parallel,
+    progress,
+    pwr,
+    readr,
+    rlang,
+    stats,
+    tidyr,
+    utils,
+    withr,
+    yaml
+Suggests:
+    callr,
+    doSNOW,
+    foreach,
+    ggnewscale,
+    ggplot2,
+    grid,
+    gridExtra,
+    kableExtra,
+    knitr,
+    latex2exp,
+    pkgload,
+    purrr,
+    rmarkdown,
+    scales,
+    stringr,
+    testthat (>= 3.2.0),
+    tibble,
+    tikzDevice,
+    tinytex,
+    viridis
+Remotes:
+    github::TristanFauvel/BExTE
+License: GPL (>= 3)
+URL: https://github.com/TristanFauvel/BExTE-sim
+BugReports: https://github.com/TristanFauvel/BExTE-sim/issues
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+Config/roxygen2/version: 8.1.0

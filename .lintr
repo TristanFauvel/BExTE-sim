@@ -1,0 +1,39 @@
+linters: linters_with_defaults(
+    # Style-only linters that would require reformatting the entire existing
+    # codebase; disabled so lintr focuses on correctness rather than style.
+    line_length_linter = NULL,
+    object_name_linter = NULL,
+    object_length_linter = NULL,
+    commented_code_linter = NULL,
+    indentation_linter = NULL,
+    brace_linter = NULL,
+    paren_body_linter = NULL,
+    pipe_consistency_linter = NULL,
+    quotes_linter = NULL,
+    spaces_inside_linter = NULL,
+    spaces_left_parentheses_linter = NULL,
+    infix_spaces_linter = NULL,
+    commas_linter = NULL,
+    # Config files set globals and closures update counters with <<-.
+    assignment_linter = assignment_linter(operator = c("<-", "<<-")),
+    # Not a style linter, but it flags every dplyr column name and every
+    # config global (methods_dict, figures_dir, ...) read from .GlobalEnv,
+    # so it stays off until those are declared or passed as arguments.
+    object_usage_linter = NULL,
+    # Every function in R/ ends with an explicit return(). Scripts, tests
+    # and vignettes keep implicit returns; see the exclusions below.
+    return_linter = return_linter(return_style = "explicit"),
+    # Non-default linters that catch real bugs with little noise here.
+    seq_linter = seq_linter(),
+    vector_logic_linter = vector_logic_linter(),
+    any_is_na_linter = any_is_na_linter(),
+    lengths_linter = lengths_linter(),
+    missing_argument_linter = missing_argument_linter(allow_trailing = TRUE)
+  )
+exclusions: list(
+    "renv",
+    "man",
+    "inst" = list(return_linter = Inf),
+    "tests" = list(return_linter = Inf),
+    "vignettes" = list(return_linter = Inf)
+  )

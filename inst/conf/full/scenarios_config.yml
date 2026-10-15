@@ -1,0 +1,80 @@
+n_replicates: 10000
+ndrift: 30
+parallelization: TRUE
+denominator_change_factor:
+    - 0.5
+    - 1
+    - 1.5
+sample_size_factors:
+    - 1
+    - 2
+    - 4
+    - 6
+# Ratio of the treatment to the control arm size of the target study, whose
+# total size sample_size_factors sets. Absent means 1, equal arms; 2 gives two
+# treated patients for each control. case_study_target_allocation_ratio
+# overrides it for single case studies, e.g. {belimumab: 1.36}.
+# target_allocation_ratio: 1
+target_to_source_std_ratio_range:
+    - 1
+    - 2
+# Time-to-event sensitivity designs, read by the paper's teriflunomide figures
+# S45-S52. They are only simulated for the time-to-event endpoint, so the other
+# case studies are unaffected. Control-arm heterogeneity kappa = log(target
+# control rate) - log(source control rate): the target placebo relapse rate is
+# two thirds of, equal to, or half again the source one.
+control_drift_range:
+    - -0.405
+    - 0
+    - 0.405
+# Probability that a patient is lost to follow-up over the maximum follow-up time.
+dropout_probability:
+    - 0
+    - 0.05
+    - 0.10
+# The Weibull arm is the sensitivity analysis; the exponential one is primary.
+event_time_distribution:
+    - exponential
+    - weibull
+# Delay before the treatment effect starts, in years (12 and 24 weeks): a
+# departure from proportional hazards that the Cox analysis does not model.
+# 0, proportional hazards, is always simulated whether or not it is listed.
+treatment_delay:
+    - 0
+    - 0.230769
+    - 0.461538
+# The whole grid is simulated under the primary design (no control-arm
+# heterogeneity, no loss to follow-up, exponential event times). The sensitivity
+# designs are simulated only at n_C = n_T = 123, and one axis at a time: seven
+# designs besides the primary one, the ones the figures plot.
+sensitivity_reference:
+    sample_size_factor: 6
+    denominator_change_factor: 1
+sensitivity_one_at_a_time: TRUE
+case_studies:
+    - belimumab
+    - botox
+    - dapagliflozin
+    - mepolizumab
+    - aprepitant
+    - teriflunomide
+methods:
+    - RMP
+    - separate
+    - pooling
+    - conditional_power_prior
+    - test_then_pool_equivalence
+    - test_then_pool_difference
+    - p_value_based_PP
+    - EB_PP
+    - PDCCPP
+    - NPP
+    - NPP_KL
+    - commensurate_power_prior
+    - commensurate_prior
+    - egidi_empirical_mixture
+# Case studies whose operating characteristics are computed exactly, by
+# enumerating the responder counts, instead of by simulating n_replicates trials.
+exact_enumeration:
+    - aprepitant
+    - belimumab

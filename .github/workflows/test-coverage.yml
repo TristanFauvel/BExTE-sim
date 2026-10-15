@@ -1,0 +1,94 @@
+name: test-coverage
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+    branches:
+      - main
+      - master
+
+permissions:
+  contents: read
+
+jobs:
+  test-coverage:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Set up R
+        uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: '4.2.0'
+          use-public-rspm: true
+
+      - name: Install dependencies
+        uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: any::covr, any::xml2, any::testthat
+          needs: coverage
+
+      - name: Measure test coverage
+        # Runs the same test suite as the test job of build.yml (no CmdStan, so
+        # the Stan equivalence tests skip). Failing tests do not stop the
+        # measurement: the test job already fails on them, and the coverage of
+        # the rest of the suite is still worth reporting.
+        run: |
+          test_dir <- normalizePath("tests/testthat")
+          cov <- covr::package_coverage(
+            type = "none",
+            code = sprintf(
+              'testthat::test_dir("%s", package = "BExTE", load_package = "installed",
+                                  stop_on_failure = FALSE, stop_on_warning = FALSE,
+                                  reporter = testthat::SummaryReporter$new(show_praise = FALSE))',
+              test_dir
+            ),
+            quiet = FALSE
+          )
+
+          dir.create("coverage", showWarnings = FALSE)
+          covr::to_cobertura(cov, filename = "coverage/cobertura.xml")
+
+          lines <- covr::tally_coverage(cov, by = "line")
+          per_file <- do.call(rbind, lapply(split(lines$value, lines$filename), function(v) {
+            data.frame(lines = length(v), covered = sum(v > 0))
+          }))
+          per_file$file <- rownames(per_file)
+          per_file$percent <- round(100 * per_file$covered / per_file$lines, 1)
+          per_file <- per_file[order(per_file$percent, -per_file$lines), c("file", "lines", "covered", "percent")]
+          write.csv(per_file, "coverage/coverage_by_file.csv", row.names = FALSE)
+
+          total <- covr::percent_coverage(cov)
+          cat(sprintf("\nLine coverage: %.1f%% (%d of %d lines)\n\n", total, sum(per_file$covered), sum(per_file$lines)))
+          print(per_file, row.names = FALSE)
+          cat(sprintf("::notice title=Test coverage::Line coverage %.1f%%\n", total))
+
+          summary_file <- Sys.getenv("GITHUB_STEP_SUMMARY")
+          if (nzchar(summary_file)) {
+            md <- c(
+              "## Test coverage",
+              "",
+              sprintf("**Line coverage: %.1f%%** (%d of %d lines)", total, sum(per_file$covered), sum(per_file$lines)),
+              "",
+              "| File | Lines | Covered | % |",
+              "|---|---:|---:|---:|",
+              sprintf("| %s | %d | %d | %.1f |", per_file$file, per_file$lines, per_file$covered, per_file$percent)
+            )
+            cat(md, file = summary_file, sep = "\n", append = TRUE)
+          }
+        shell: Rscript {0}
+
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: coverage-report
+          path: coverage/
+          if-no-files-found: ignore
